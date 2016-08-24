@@ -61,6 +61,8 @@ public class RadialMenuView extends View {
 
     private void init(Context context) {
         mContext = context;
+        if (mOptions.length != mNumOptions) throw new IllegalArgumentException();
+        if (mNumOptions < 1 || mNumOptions > 12) throw new IllegalArgumentException();
         // Perform normal constructor stuff here.
         // Could have option to set style with a special style in styles.xml, just doing it manually for now
         bodyPaint.setColor(Color.argb(200, 150, 150, 150));
@@ -74,6 +76,7 @@ public class RadialMenuView extends View {
     @Override
     protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
         super.onSizeChanged(xNew, yNew, xOld, yOld);
+        if (getWidth() != getHeight()) throw new IllegalArgumentException();
         mOrigin = new Point(getWidth()/2, getHeight()/2);
         innerRadius = getWidth()/6;
         outerRadius = getWidth()/2;
