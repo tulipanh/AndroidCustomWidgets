@@ -3,9 +3,6 @@ This repository is just a storage space for a number of custom Views that I have
 Some of the Views were made for specific apps and some were made to be used in any future apps.
 
 RadialMenu:
-I made this as a challenge to myself. A working radial menu was something that I had desired a number of times in the past, but had lacked the knowledge to implement myself.
-In the process of writing my VesselBuilder app I realized that I might have gained the tools need to finally complete this widget and spent a couple of days seeing it out.
-
 In the XML, the Radial Menu requires square dimensions and a positive number between 1 and 12 in the custom numberOfOptions field. It also requires names for the menu items
 input in the custom optionsText field. These names must be separated by '/' characters and there must be a number of them matching the numberOfFields number. They can be 
 empty, but there must be numberOfFields-1 '/' characters. 
@@ -15,3 +12,10 @@ of the RadialMenuView.ActionExecutor class with the performMenuAction(int menuIt
 of options specified in the XML. The number 0 is passed when the Radial Menu is brought up, but no action is selected.
 In its current state, the Radial Menu is functional, but lacks polish and a great deal of styling, which could be altered for specific use by modification of the onDraw
 function of the RadialMenuView class. 
+
+StepProgress:
+In the XML, the step-progress bar requires the custom fields numberOfSteps and progressLevel. The numberOfSteps attribute must be and integer greater than 0.
+The progressLevel attribute should be between 0 and numberOfSteps, but will default to either the maximum if its set greater than numberOfSteps or the minimum if its
+set less than 0.
+Labels for each step must be created separately. 
+This View requires custom colors called "progressComplete" and "progressIncomplete" as well as custom attributes called "numberOfSteps" and "progressLevel".

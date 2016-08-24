@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="StepProgressView">
+        <attr name="numberOfSteps" format="integer"></attr>
+        <attr name="progressLevel" format="integer"></attr>
+        <attr name="stepsText" format="string"></attr>
+    </declare-styleable>
+</resources>
