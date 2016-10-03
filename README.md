@@ -24,3 +24,6 @@ DoubleSeekbar:
 In the XML, the DoubleSeekbar requires the custom fields minimumValue, maximumValue, and stepSize. The maximumValue attribute must be greater
 than the minimumValue attribute and both must be integers. This View requires custom colors called "doubleSeekbarUpper", "doubleSeekbarLower", "doubleSeekbarBar",
 and "doubleSeekbarHighlight".
+To fully implement, the actions to be taken when Seekbar is changed should be defined in the calling Activity by calling the DoubleSeekBar.setActionExecutor() function 
+and passing it an instance of the DoubleSeekBar.ActionExecutor class with the touchMove() and touchUp() functions overriden. These functions can access the two values 
+of the Seekbar using the getLowerValue() and getUpperValue() functions.
