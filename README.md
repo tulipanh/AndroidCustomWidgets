@@ -19,3 +19,8 @@ The progressLevel attribute should be between 0 and numberOfSteps, but will defa
 set less than 0.
 Labels for each step must be created separately. 
 This View requires custom colors called "progressComplete" and "progressIncomplete" as well as custom attributes called "numberOfSteps" and "progressLevel".
+
+DoubleSeekbar:
+In the XML, the DoubleSeekbar requires the custom fields minimumValue, maximumValue, and stepSize. The maximumValue attribute must be greater
+than the minimumValue attribute and both must be integers. This View requires custom colors called "doubleSeekbarUpper", "doubleSeekbarLower", "doubleSeekbarBar",
+and "doubleSeekbarHighlight".
