@@ -12,14 +12,18 @@ import android.view.View;
 
 import com.tulipan.hunter.doubleseekbartest.R;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 /**
  * Created by Hunter on 10/2/2016.
  */
 public class DoubleSeekBarView extends View {
     private Context mContext;
-    private Integer mMinValue;
-    private Integer mMaxValue;
-    private Float mStepSize;
+    private Integer mMinValue = 0;
+    private Integer mMaxValue = 0;
+    private Float mStepSize = 0f;
     private float mSizeOfOne;
     private float mUpperValue;
     private float mLowerValue;
@@ -36,6 +40,7 @@ public class DoubleSeekBarView extends View {
     private Paint lowerPaint = new Paint();
     private Paint barPaint = new Paint();
     private Paint highlightPaint = new Paint();
+    private Paint textPaint = new Paint();
     private int circleRadius;
     private float sideBuffer;
 
@@ -71,6 +76,7 @@ public class DoubleSeekBarView extends View {
          */
         if (mMaxValue < mMinValue) throw new IllegalArgumentException();
         if (mStepSize > mMaxValue - mMinValue) throw new IllegalArgumentException();
+        if (mStepSize < 0.00000001) throw new IllegalArgumentException();
         mUpperValue = mMaxValue.floatValue();
         mLowerValue = mMinValue.floatValue();
 
@@ -93,6 +99,9 @@ public class DoubleSeekBarView extends View {
         circleRadius = 20;
         sideBuffer = 30f;
 
+        textPaint.setColor(Color.BLACK);
+        textPaint.setTextSize(12f);
+
         mSelected = NONE;
         mLastSelected = NONE;
     }
@@ -101,10 +110,9 @@ public class DoubleSeekBarView extends View {
     public void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
         super.onSizeChanged(xNew, yNew, xOld, yOld);
 
-        mLowerPosition = sideBuffer;
-        mUpperPosition = getWidth()-sideBuffer;
-
         mSizeOfOne = (getWidth()-2*sideBuffer)/(float)(mMaxValue - mMinValue);
+        mLowerPosition = mLowerValue*mSizeOfOne+sideBuffer;
+        mUpperPosition = mUpperValue*mSizeOfOne+sideBuffer;
 
     }
 
@@ -117,14 +125,15 @@ public class DoubleSeekBarView extends View {
         int height = getHeight();
 
         canvas.drawLine(sideBuffer, height/2, mLowerPosition, height/2, barPaint);
-        canvas.drawLine(mLowerPosition, height/2, mUpperPosition, height/2, lowerPaint);
-        canvas.drawLine(mUpperPosition, height/2, width-sideBuffer, height/2, barPaint);
+        canvas.drawLine(mLowerPosition, height / 2, mUpperPosition, height / 2, lowerPaint);
+        canvas.drawLine(mUpperPosition, height / 2, width - sideBuffer, height / 2, barPaint);
         if (mSelected == LOWER) canvas.drawCircle(mLowerPosition, height/2, 2*circleRadius, highlightPaint);
         else if (mSelected == UPPER) canvas.drawCircle(mUpperPosition, height/2, 2*circleRadius, highlightPaint);
-        canvas.drawCircle(mLowerPosition, height/2, circleRadius, lowerPaint);
+        canvas.drawCircle(mLowerPosition, height / 2, circleRadius, lowerPaint);
         canvas.drawCircle(mUpperPosition, height/2, circleRadius, upperPaint);
+        canvas.drawText(String.valueOf(getRoundedValue(mLowerValue)), mLowerPosition, 2 * height / 3, textPaint);
+        canvas.drawText(String.valueOf(getRoundedValue(mUpperValue)), mUpperPosition, 2*height/3, textPaint);
     }
-
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         float x = e.getX();
@@ -197,12 +206,52 @@ public class DoubleSeekBarView extends View {
         return true;
     }
 
+    private BigDecimal getRoundedValue(float val) {
+        BigDecimal bd = new BigDecimal(val);
+        BigDecimal step = new BigDecimal(mStepSize).setScale(8, RoundingMode.HALF_UP).stripTrailingZeros();
+
+        bd = bd.divide(step, RoundingMode.HALF_UP).setScale(0, RoundingMode.HALF_UP);
+        bd = bd.multiply(step);
+        return bd.setScale(step.scale(), RoundingMode.HALF_UP);
+    }
+
     public float getUpperValue() {
-        return mUpperValue;
+        return getRoundedValue(mUpperValue).floatValue();
     }
 
     public float getLowerValue() {
-        return mLowerValue;
+        return getRoundedValue(mLowerValue).floatValue();
+    }
+
+    public void setUpperValue(float value) {
+        /* Yes this is sloppy since comparing floating point values is more complicated due to floating point error. */
+        float valToSet = Math.round(value/mStepSize)*mStepSize;
+        if (lessThan(valToSet, mLowerValue)) valToSet = mLowerValue;
+        mUpperValue = valToSet;
+        mUpperPosition = mUpperValue*mSizeOfOne+sideBuffer;
+        invalidate();
+    }
+
+    public void setLowerValue(float value) {
+        /* This is sloppy for the same reasons as setUpperValue. */
+        /* It could be made better with a comparison function that uses a delta value of mStepSize. */
+        float valToSet = Math.round(value/mStepSize)*mStepSize;
+        if (greaterThan(valToSet, mUpperValue)) valToSet = mUpperValue;
+        mLowerValue = valToSet;
+        mLowerPosition = mLowerValue*mSizeOfOne+sideBuffer;
+        invalidate();
+    }
+
+    private boolean lessThan(float a, float b) {
+        return (a-b < -mStepSize);
+    }
+
+    private boolean greaterThan(float a, float b) {
+        return (a-b > mStepSize);
+    }
+
+    private boolean equalTo(float a, float b) {
+        return (Math.abs(a-b) < mStepSize);
     }
 
     public void setActionExecutor(ActionExecutor e) { mActionExecutor = e;}
