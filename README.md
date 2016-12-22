@@ -27,3 +27,9 @@ and "doubleSeekbarHighlight".
 To fully implement, the actions to be taken when Seekbar is changed should be defined in the calling Activity by calling the DoubleSeekBar.setActionExecutor() function 
 and passing it an instance of the DoubleSeekBar.ActionExecutor class with the touchMove() and touchUp() functions overriden. These functions can access the two values 
 of the Seekbar using the getLowerValue() and getUpperValue() functions.
+
+FileExplorer:
+To fully implement, the MainActivity member variable and corresponding bit of the constructor should be changed to match the Activity type that is calling and using
+this class. This class also requires external read permissions and as such a permissions request listener should be implemented in the calling Activity. This class does
+not implement any View. It only holds and manages the data. As such, it should be paired with a ListView, RecyclerView or something similar. The example uses a very simple
+ListView.
